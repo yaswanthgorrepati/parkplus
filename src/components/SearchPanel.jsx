@@ -2,7 +2,7 @@ import React, { useContext, useState } from "react";
 import ServiceTabs from "./ServiceTabs.jsx";
 import ServiceContext from "../utils/ServiceContext.jsx";
 import { SERVICE } from "../utils/constants.jsx";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const SearchPanel = () => {
   const [location, setLocation] = useState("");

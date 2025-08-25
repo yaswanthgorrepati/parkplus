@@ -11,7 +11,6 @@ import Reviews from "../components/Reviews.jsx";
 import FAQ from "../components/FAQ.jsx";
 import CityGallery from "../components/CityGallery.jsx";
 import ContactCTA from "../components/ContactCTA.jsx";
-import Footer from "../components/Footer.jsx";
 import FooterWide from "../components/FooterWide.jsx";
 
 const Home = () => {
