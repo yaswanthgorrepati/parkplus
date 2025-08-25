@@ -22,7 +22,7 @@ export default function Login() {
               <div className="flex items-center gap-3">
                 <div className="h-10 w-10 rounded bg-[#ff6b4a]" />
                 <div className="text-4xl font-extrabold tracking-tight text-[#2d3e50]">
-                  airattix
+                  parkplus
                 </div>
               </div>
               <div className="mt-2 text-[#425466]">

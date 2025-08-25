@@ -21,8 +21,8 @@ export default function FooterWide() {
             </div>
             <div className="flex items-center gap-2">
               <span>✉️</span>
-              <a href="mailto:info@airattix.com" className="hover:underline">
-                info@airattix.com
+              <a href="mailto:info@parkplus.com" className="hover:underline">
+                info@parkplus.com
               </a>
             </div>
           </div>

@@ -41,7 +41,7 @@ export async function openRazorpayCheckout({
     key, // your Key ID
     amount: amountInPaise, // in paise
     currency: "INR",
-    name: "Airattix",
+    name: "Parkplus",
     description: "Space booking",
     image: "/favicon.svg",
     order_id: orderId, // frontend-dev: omit; prod: REQUIRED

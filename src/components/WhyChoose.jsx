@@ -15,7 +15,7 @@ export default function WhyChoose() {
   ];
   return (
     <section className="container-px py-10 ">
-      <h2 className="text-2xl font-semibold mb-4">Why Choose Airattix?</h2>
+      <h2 className="text-2xl font-semibold mb-4">Why Choose ParkPlus?</h2>
       <div className=" grid md:grid-cols-3 gap-6">
         {SERVICE.get("parking").whyChooseUs.map((c) => (
           <div key={c.title} className="card p-6">
