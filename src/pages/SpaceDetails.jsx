@@ -1,9 +1,13 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import FooterWide from "../components/FooterWide.jsx";
 import Navbar from "../components/Navbar.jsx";
 import ListingCard from "../components/ListingCard.jsx";
-import { Link } from "react-router-dom";
-import { SERVICE } from "../utils/constants.jsx";
+import { Link, useParams } from "react-router-dom";
+import {
+  getParkingSpots,
+  getParkingSpotsById,
+  SERVICE,
+} from "../utils/constants.jsx";
 
 const Dot = () => (
   <span className="inline-block h-[6px] w-[6px] rounded-full bg-emerald-500 mr-2" />
@@ -37,6 +41,14 @@ export default function SpaceDetails() {
     },
   };
 
+  const [parkingSpot, setParkingSpot] = useState(null);
+  const { id } = useParams();
+
+  useEffect(() => {
+    const res = getParkingSpotsById(id);
+    setParkingSpot(res[0]);
+    console.log(res);
+  }, []);
   return (
     <>
       <Navbar />
@@ -49,7 +61,7 @@ export default function SpaceDetails() {
               </h1>
               <div className="mt-2 text-sm text-neutral-600 flex items-center gap-2">
                 <span>📍</span>
-                <span className="font-medium">{item.address}</span>
+                <span className="font-medium">{parkingSpot?.address}</span>
               </div>
             </div>
             <div className="hidden md:flex items-center gap-3">
@@ -63,14 +75,16 @@ export default function SpaceDetails() {
             <section>
               <div className="grid grid-cols-3 lg:grid-cols-4 gap-3">
                 <div className="col-span-2 lg:col-span-3 rounded-2xl overflow-hidden">
-                  <img
-                    src={item.images[0]}
-                    alt=""
-                    className="w-full h-full object-cover"
-                  />
+                  {parkingSpot?.images?.length > 0 && (
+                    <img
+                      src={parkingSpot.images[0]}
+                      alt=""
+                      className="w-full h-full object-cover"
+                    />
+                  )}
                 </div>
                 <div className="col-span-1 lg:col-span-1 grid grid-rows-4 gap-3">
-                  {item.images.slice(1, 5).map((src) => (
+                  {parkingSpot?.images?.slice(1, 5).map((src) => (
                     <div
                       key={src}
                       className="rounded-2xl overflow-hidden relative"
@@ -86,10 +100,10 @@ export default function SpaceDetails() {
               </div>
 
               <h2 className="mt-6 text-2xl font-bold leading-snug max-w-3xl">
-                {item.title}
+                {parkingSpot?.title}
               </h2>
               <div className="mt-3 flex flex-wrap gap-2">
-                {item.badges.map((b) => (
+                {parkingSpot?.badges?.map((b) => (
                   <span
                     key={b}
                     className="inline-flex items-center rounded-md bg-neutral-100 text-neutral-700 px-3 py-1 text-xs font-semibold border border-neutral-200"
@@ -106,7 +120,7 @@ export default function SpaceDetails() {
               <hr className="my-6 border-neutral-200" />
               <h3 className="text-lg font-extrabold">Vehicle Types Allowed</h3>
               <div className="mt-3 grid sm:grid-cols-2 gap-2 text-sm">
-                {item.vehicleTypes.map((v) => (
+                {parkingSpot?.vehicleTypes?.map((v) => (
                   <div key={v} className="flex items-center">
                     <Dot /> {v}
                   </div>
@@ -116,7 +130,7 @@ export default function SpaceDetails() {
               <hr className="my-6 border-neutral-200" />
               <h3 className="text-lg font-extrabold">Amenities</h3>
               <div className="mt-3 grid sm:grid-cols-2 gap-2 text-sm">
-                {item.amenities.map((v) => (
+                {parkingSpot?.amenities?.map((v) => (
                   <div key={v} className="flex items-center">
                     <Dot /> {v}
                   </div>
@@ -126,21 +140,21 @@ export default function SpaceDetails() {
               <hr className="my-6 border-neutral-200" />
               <h3 className="text-lg font-extrabold">Accessibility</h3>
               <div className="mt-2 text-sm font-semibold">
-                {item.accessibility}
+                {parkingSpot?.accessibility}
               </div>
 
               <hr className="my-6 border-neutral-200" />
               <h3 className="text-lg font-extrabold">Hosted by</h3>
               <div className="mt-3 bg-white rounded-2xl border border-neutral-200 shadow-[0_10px_30px_rgba(2,6,23,0.06)] p-4 flex items-center gap-4">
                 <img
-                  src={item.host.avatar}
-                  alt={item.host.name}
+                  src={parkingSpot?.host?.avatar}
+                  alt={parkingSpot?.host?.name}
                   className="h-14 w-14 rounded-xl object-cover"
                 />
                 <div className="flex-1">
-                  <div className="font-semibold">{item.host.name}</div>
+                  <div className="font-semibold">{parkingSpot?.host?.name}</div>
                   <div className="mt-1 flex flex-wrap gap-x-5 gap-y-2 text-sm text-neutral-600">
-                    {item.host.details.map((d) => (
+                    {parkingSpot?.host?.details.map((d) => (
                       <span key={d} className="inline-flex items-center gap-2">
                         <span className="h-[6px] w-[6px] rounded-full bg-emerald-500 inline-block" />
                         {d}
@@ -160,8 +174,8 @@ export default function SpaceDetails() {
                   <div className="text-sm text-neutral-600">Price</div>
                 </div>
                 <div className="flex items-center justify-between font-semibold">
-                  <div>{item.available}</div>
-                  <div>{item.priceUnit}</div>
+                  <div>{parkingSpot?.available}</div>
+                  <div>{parkingSpot?.priceUnit}</div>
                 </div>
 
                 <div className="mt-4">

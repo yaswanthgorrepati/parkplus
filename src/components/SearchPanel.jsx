@@ -14,7 +14,7 @@ const SearchPanel = () => {
     endDate: false,
   });
 
-  console.log(error);
+  // console.log(error);
   const { serviceName } = useContext(ServiceContext);
 
   const navigate = useNavigate();
@@ -44,14 +44,21 @@ const SearchPanel = () => {
       return { ...prevError, ...formError };
     });
 
-    console.log("form error " + JSON.stringify(formError));
+    // console.log("form error " + JSON.stringify(formError));
 
     if (!isFromValid) {
       return;
     }
-    console.log(isFromValid);
+    // console.log(isFromValid);
 
-    navigate("/search");
+    const params = new URLSearchParams();
+    params.set("text", location);
+    params.set("sDate", startDate);
+    params.set("eDate", endDate);
+
+    // console.log(params.toString());
+
+    navigate(`/search?${params.toString()}`);
   };
 
   return (

@@ -1,7 +1,7 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useUrlArrayParam, useUrlParam } from "./useUrlParams.jsx";
 
-export default function FilterSidebar() {
+export default function FilterSidebar({ filterListingData }) {
   const [type, setType] = useUrlParam("type", "parking");
   const [text, setText] = useUrlParam("text", "");
   const [sDate, setSDate] = useUrlParam("sDate", "");
@@ -13,22 +13,41 @@ export default function FilterSidebar() {
 
   const section = "bg-white rounded-2xl border px-4 py-4";
   const h = "text-[13px] uppercase tracking-wide text-neutral-500 mb-2";
+  useEffect(() => {
+    const data = {
+      type,
+      text1: text,
+      sDate: sDate,
+      eDate: eDate,
+      vcl: vcl.values,
+      space1: space.values,
+      fac: fac.values,
+    };
+
+    filterListingData(data);
+  }, [type, text, sDate, eDate, vcl.values, space.values, fac.values]);
 
   const vehicles = [
     "SUV",
     "Hatchback",
     "Sedan",
-    "Truck/Bus",
-    "Tempo/pickup",
-    "Auto rickshaw",
+    "Truck",
+    "Bus",
+    "Tempo",
+    "AutoRickshaw",
     "Minibus",
     "Motorcycle",
   ];
-  const spaces = ["Open parking space", "Covered parking space"];
+
+  const spaces = [
+    { desc: "Open parking space", value: "Open" },
+    { desc: "Covered parking space", value: "Covered" },
+  ];
+
   const facilities = [
-    "Commercial parking",
-    "Residential parking",
-    "Public parking spaces",
+    { desc: "Commercial parking", value: "Commercial" },
+    { desc: "Residential parking", value: "Residential" },
+    { desc: "Public parking spaces", value: "Public" },
   ];
 
   return (
@@ -118,13 +137,13 @@ export default function FilterSidebar() {
         <p className={h}>Parking space type</p>
         <div className="space-y-2 text-sm">
           {spaces.map((v) => (
-            <label key={v} className="flex items-center gap-2">
+            <label key={v.desc} className="flex items-center gap-2">
               <input
                 type="checkbox"
-                checked={space.values.includes(v)}
-                onChange={() => space.toggle(v)}
+                checked={space.values.includes(v.value)}
+                onChange={() => space.toggle(v.value)}
               />
-              <span>{v}</span>
+              <span>{v.desc}</span>
             </label>
           ))}
         </div>
@@ -134,13 +153,13 @@ export default function FilterSidebar() {
         <p className={h}>Facility type</p>
         <div className="space-y-2 text-sm">
           {facilities.map((v) => (
-            <label key={v} className="flex items-center gap-2">
+            <label key={v.desc} className="flex items-center gap-2">
               <input
                 type="checkbox"
-                checked={fac.values.includes(v)}
-                onChange={() => fac.toggle(v)}
+                checked={fac.values.includes(v.value)}
+                onChange={() => fac.toggle(v.value)}
               />
-              <span>{v}</span>
+              <span>{v.desc}</span>
             </label>
           ))}
         </div>
