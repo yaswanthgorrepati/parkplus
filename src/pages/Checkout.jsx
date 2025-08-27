@@ -171,7 +171,7 @@ export default function Checkout() {
                   <ProfileItem
                     ok={emailDone}
                     title="Email address"
-                    desc="ramesh040816@gmail.com"
+                    desc="ramesh@gmail.com"
                     actionLabel="Edit"
                   />
 

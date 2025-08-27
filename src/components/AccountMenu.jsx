@@ -49,7 +49,7 @@ export default function AccountMenu() {
           <div className="px-4 py-3 border-b">
             <div className="font-semibold">Ramesh ramesh</div>
             <div className="text-sm text-neutral-600 truncate">
-              ramesh04816@gmail.com
+              ramesh@gmail.com
             </div>
           </div>
           <nav className="p-1 text-sm">

@@ -8,7 +8,7 @@ const field =
 export default function AccountPage() {
   const [name, setName] = useState("Ramesh");
   const [phone, setPhone] = useState("");
-  const [email, setEmail] = useState("ramesh04816@gmail.com");
+  const [email, setEmail] = useState("ramesh@gmail.com");
   const [altName, setAltName] = useState("");
   const [altPhone, setAltPhone] = useState("");
 
