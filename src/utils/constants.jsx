@@ -1,3 +1,17 @@
+// ScrollToTop.js
+import { useEffect } from "react";
+import { useLocation } from "react-router-dom";
+
+export function ScrollToTop() {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0); // Scrolls to the top-left corner of the window
+  }, [pathname]); // Re-run effect whenever the pathname changes
+
+  return null; // This component doesn't render any UI
+}
+
 export const SERVICE = new Map([
   [
     "storage",
@@ -256,36 +270,6 @@ export const CITIES = [
   },
 ];
 
-const testData = [
-  {
-    id: 1,
-    title: "Covered parking space in Park Street, Kolkata, West Bengal, India",
-    address: "Park Street, Kolkata, West Bengal, India",
-    badges: ["Basement Parking", "Near Elevator"],
-    price: 294,
-    priceUnit: "\u20b9 499 /day/space",
-    available: 1,
-    images: [
-      "https://images.unsplash.com/photo-1590938076771-dfe17af4d484?w=900&auto=format&fit=crop&q=60",
-      "https://images.unsplash.com/photo-1529089059310-92aa39a13908?w=900&auto=format&fit=crop&q=60",
-      "https://images.unsplash.com/photo-1532217635-b45271b1aab6?w=900&auto=format&fit=crop&q=60",
-      "https://images.unsplash.com/photo-1467840090898-5b940a807822?w=900&auto=format&fit=crop&q=60",
-      "https://images.unsplash.com/photo-1593280405106-e438ebe93f5b?w=900&auto=format&fit=crop&q=60",
-    ],
-    vehicleTypes: ["SUV", "Hatchback", "Sedan", "Motorcycle"],
-    amenities: ["Sufficient lighting", "Security guards", "CCTV surveillance"],
-    accessibility: "24X7 Access",
-    host: {
-      name: "Sai Kumar",
-      avatar:
-        "https://images.unsplash.com/photo-1541101767792-f9b2b1c4f127?q=80&w=256&auto=format&fit=crop",
-      details: ["Email address", "Phone number", "Govt ID"],
-    },
-    parkingSpaceType: ["open"], //open or covered
-    facilityType: ["commercial"], //commercial or residential or public
-  },
-];
-
 //This is the test functions mimick the backend calls
 
 export function getParkingSpots(
@@ -334,6 +318,23 @@ export function getParkingSpotsById(id) {
     // debugger;
     return id == item.id;
   });
+}
+
+export function getSimilarBookings(text) {
+  const res = test.filter((item) => {
+    if (
+      text?.split(/[ ,.]+/).some((type) =>
+        item.address
+          .toLowerCase()
+          .split(/[ ,.]+/)
+          .includes(type.toLowerCase()),
+      )
+    ) {
+      return item;
+    }
+  });
+
+  return res;
 }
 
 const test = [

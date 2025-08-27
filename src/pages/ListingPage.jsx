@@ -7,6 +7,7 @@ import { getParkingSpots, SERVICE } from "../utils/constants.jsx";
 
 export default function ListingPage() {
   const [filterOptions, setFilterOptions] = React.useState();
+  console.log(filterOptions?.sDate);
   const [listingPrakingSpaces, setListingPrakingSpaces] = React.useState([
     {
       id: 1,
@@ -42,7 +43,7 @@ export default function ListingPage() {
   ]);
   const filterListingData = (data) => {
     // console.log(data);
-    // setFilterOptions(data);
+    setFilterOptions(data);
 
     //call the  backend call and pass the data to get the list card data
     let res = getParkingSpots(
@@ -88,7 +89,12 @@ export default function ListingPage() {
                 {/*))}*/}
 
                 {listingPrakingSpaces.map((i) => (
-                  <ListingCard key={i.id} item={i} />
+                  <ListingCard
+                    key={i.id}
+                    item={i}
+                    sDate={filterOptions?.sDate}
+                    eDate={filterOptions?.eDate}
+                  />
                 ))}
               </div>
             </section>

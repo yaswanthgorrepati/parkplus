@@ -1,7 +1,13 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-export default function ListingCard({ item }) {
+export default function ListingCard({ item, sDate, eDate }) {
+  const params = new URLSearchParams();
+  if (sDate && eDate) {
+    params.set("sDate", sDate);
+    params.set("eDate", eDate);
+  }
+
   return (
     <div className="bg-white border border-neutral-200 rounded-2xl shadow-[0_10px_30px_rgba(2,6,23,0.08)] overflow-hidden">
       <div className="aspect-[4/3] w-full bg-neutral-200">
@@ -18,7 +24,10 @@ export default function ListingCard({ item }) {
           <div className="flex items-center  flex-wrap gap-2 w-full">
             {item?.badges?.length > 0 &&
               item.badges.map((badge) => (
-                <span className="px-2 py-1 rounded-md text-[11px] font-medium bg-red-100 text-red-700">
+                <span
+                  key={badge}
+                  className="px-2 py-1 rounded-md text-[11px] font-medium bg-red-100 text-red-700"
+                >
                   {badge}
                 </span>
               ))}
@@ -40,7 +49,8 @@ export default function ListingCard({ item }) {
             </div>
             <div className="text-green-600 font-medium">₹{item.priceUnit}</div>
           </div>
-          <Link to={`/space/${item.id}`}>
+
+          <Link to={`/space/${item.id}?${params.toString()}`}>
             <button className="h-10 px-5 rounded-xl bg-red-500 hover:bg-red-600 text-white font-medium">
               Book Now
             </button>

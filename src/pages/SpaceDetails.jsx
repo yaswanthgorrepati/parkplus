@@ -1,54 +1,32 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import FooterWide from "../components/FooterWide.jsx";
 import Navbar from "../components/Navbar.jsx";
 import ListingCard from "../components/ListingCard.jsx";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import {
-  getParkingSpots,
   getParkingSpotsById,
-  SERVICE,
+  getSimilarBookings,
 } from "../utils/constants.jsx";
+import { useUrlParam } from "../components/filters/useUrlParams.jsx";
+import SpaceBookingDetails from "../components/SpaceBookingDetails.jsx";
 
 const Dot = () => (
   <span className="inline-block h-[6px] w-[6px] rounded-full bg-emerald-500 mr-2" />
 );
 
 export default function SpaceDetails() {
-  const item = {
-    id: 1,
-    title:
-      "Covered parking space in Madhav Puram Tirupati, Andhra Pradesh, India",
-    address: "Madhav Puram Tirupati, Andhra Pradesh, India",
-    badges: ["Parking space", "Floor: 4"],
-    price: 259,
-    priceUnit: "₹ 259 /day/space",
-    available: 1,
-    images: [
-      "https://images.unsplash.com/photo-1590938076771-dfe17af4d484?w=900&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8N3x8cGFya2luZyUyMGxvdHxlbnwwfHwwfHx8MA%3D%3D",
-      "https://images.unsplash.com/photo-1467840090898-5b940a807822?w=900&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTV8fHBhcmtpbmclMjBsb3R8ZW58MHx8MHx8fDA%3D",
-      "https://images.unsplash.com/photo-1529089059310-92aa39a13908?w=900&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MjB8fHBhcmtpbmclMjBsb3R8ZW58MHx8MHx8fDA%3D",
-      "https://images.unsplash.com/photo-1593280405106-e438ebe93f5b?w=900&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8cGFya2luZyUyMGxvdHxlbnwwfHwwfHx8MA%3D%3D",
-      "https://images.unsplash.com/photo-1532217635-b45271b1aab6?w=900&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8cGFya2luZyUyMGxvdHxlbnwwfHwwfHx8MA%3D%3D",
-    ],
-    vehicleTypes: ["SUV", "Hatchback", "Sedan", "Motorcycle"],
-    amenities: ["Security guards", "Sufficient lighting", "CCTV surveillance"],
-    accessibility: "24X7 Access",
-    host: {
-      name: "sai kumar",
-      avatar:
-        "https://images.unsplash.com/photo-1541101767792-f9b2b1c4f127?q=80&w=256&auto=format&fit=crop",
-      details: ["Email address", "Phone number", "Govt ID"],
-    },
-  };
-
   const [parkingSpot, setParkingSpot] = useState(null);
   const { id } = useParams();
+  const [sDate] = useUrlParam("sDate", "");
+  const [eDate] = useUrlParam("eDate", "");
+
+  const [similarBookings, setSimilarBookings] = useState([]);
 
   useEffect(() => {
     const res = getParkingSpotsById(id);
     setParkingSpot(res[0]);
-    console.log(res);
-  }, []);
+    setSimilarBookings(getSimilarBookings(res[0]?.address));
+  }, [id]);
   return (
     <>
       <Navbar />
@@ -57,7 +35,7 @@ export default function SpaceDetails() {
           <div className="flex items-center justify-between pt-6">
             <div>
               <h1 className="text-[40px] leading-tight font-extrabold tracking-tight">
-                sai’s parking space
+                {parkingSpot?.host?.name}'s Parking Space
               </h1>
               <div className="mt-2 text-sm text-neutral-600 flex items-center gap-2">
                 <span>📍</span>
@@ -166,89 +144,7 @@ export default function SpaceDetails() {
             </section>
 
             <aside className="lg:sticky lg:top-20 h-fit">
-              <div className="bg-white rounded-2xl border border-neutral-200 shadow-[0_10px_30px_rgba(2,6,23,0.08)] p-4">
-                <div className="flex items-center justify-between">
-                  <div className="text-sm text-neutral-600">
-                    Available Spaces
-                  </div>
-                  <div className="text-sm text-neutral-600">Price</div>
-                </div>
-                <div className="flex items-center justify-between font-semibold">
-                  <div>{parkingSpot?.available}</div>
-                  <div>{parkingSpot?.priceUnit}</div>
-                </div>
-
-                <div className="mt-4">
-                  <div className="text-sm text-neutral-600">
-                    Select booking duration
-                    <span className="block text-[11px] opacity-80">
-                      (Start Date → End Date)
-                    </span>
-                  </div>
-                  <div className="mt-2 grid grid-cols-2 gap-2">
-                    <input
-                      type="date"
-                      className="h-11 rounded-xl border border-neutral-300 px-3"
-                      defaultValue=""
-                    />
-                    <input
-                      type="date"
-                      className="h-11 rounded-xl border border-neutral-300 px-3"
-                      defaultValue=""
-                    />
-                  </div>
-                </div>
-
-                <div className="mt-4">
-                  <label className="text-sm text-neutral-700 font-medium pr-2">
-                    Required spaces
-                  </label>
-                  <input
-                    type="number"
-                    defaultValue={1}
-                    min={1}
-                    className="mt-2 h-11 rounded-xl border border-neutral-300 px-3 w-24"
-                  />
-                  <div className="mt-2 text-[11px] text-neutral-500">
-                    Available booking spaces: 1
-                  </div>
-                </div>
-
-                <div className="mt-4 space-y-2 text-sm">
-                  <label className="flex items-center gap-2">
-                    <input type="radio" name="pay" defaultChecked />
-                    Full Payment
-                  </label>
-                  <label className="flex items-center gap-2 text-neutral-400">
-                    <input type="radio" name="pay" disabled /> Monthly payments
-                  </label>
-                  <p className="text-[11px] text-neutral-500">
-                    (Applicable for bookings of more than 30 days)
-                  </p>
-                </div>
-
-                <div className="mt-4 border-t border-neutral-200 pt-3 text-sm">
-                  <div className="flex items-center justify-between py-1">
-                    <span>Parking space rent</span>
-                    <span>₹ 6000.00</span>
-                  </div>
-                  <div className="flex items-center justify-between py-1">
-                    <span>Service fees & Taxes</span>
-                    <span>₹ 1770.00</span>
-                  </div>
-                  <div className="flex items-center justify-between py-2 font-semibold border-t mt-2">
-                    <span>Total rent</span>
-                    <span className="text-emerald-600">₹ 7770.00</span>
-                  </div>
-                </div>
-
-                <Link to="/checkout/1">
-                  <button className="mt-3 h-11 w-full rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold">
-                    Proceed
-                  </button>
-                </Link>
-              </div>
-
+              <SpaceBookingDetails parkingSpot={parkingSpot} />
               <div className="mt-4 rounded-2xl bg-neutral-100 border border-neutral-200 p-4 text-sm">
                 <div className="font-semibold mb-1">Needs Host approval</div>
                 <p className="text-neutral-600">
@@ -265,8 +161,13 @@ export default function SpaceDetails() {
             </h3>
             <hr className="mt-1 mb-6 border-neutral-200" />
             <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-              {SERVICE.get("parking").totalParking.map((m) => (
-                <ListingCard key={m.id} item={m} />
+              {similarBookings.map((item) => (
+                <ListingCard
+                  key={item.id}
+                  item={item}
+                  sDate={sDate}
+                  eDate={eDate}
+                />
               ))}
             </div>
           </div>

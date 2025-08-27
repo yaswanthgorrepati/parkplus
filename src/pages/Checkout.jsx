@@ -1,21 +1,13 @@
-// src/pages/Checkout.jsx
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import FooterWide from "../components/FooterWide.jsx";
 import Navbar from "../components/Navbar.jsx";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import VehicleModal from "../components/VehicleModal.jsx";
-import { openRazorpayCheckout } from "../utils/razorpay.js"; // reuse the wide footer
+import { openRazorpayCheckout } from "../utils/razorpay.js";
+import { getParkingSpotsById } from "../utils/constants.jsx";
+import SpaceBookingDetails from "../components/SpaceBookingDetails.jsx";
 
 export default function Checkout() {
-  // mock product summary
-  const space = {
-    title: "sai’s parking space",
-    sub: "Host approval",
-    img: "https://images.unsplash.com/photo-1517512006864-7edc3b933137?q=80&w=800&auto=format&fit=crop",
-    priceUnit: "₹ 259 /day/space",
-    available: 1,
-  };
-
   const [freq, setFreq] = useState("");
   const [vehicles, setVehicles] = useState([]);
   const [vehicleOpen, setVehicleOpen] = useState(false);
@@ -23,32 +15,17 @@ export default function Checkout() {
   const [phoneDone, setPhoneDone] = useState(false);
   const [profileDone, setProfileDone] = useState(false);
 
-  const [sDate, setSDate] = useState("2025-08-22");
-  const [eDate, setEDate] = useState("2025-09-20");
-  const [qty, setQty] = useState(1);
-  const [coupon, setCoupon] = useState("");
-  const [agree, setAgree] = useState(false);
-
   const navigate = useNavigate();
 
-  const days = useMemo(() => {
-    const a = new Date(sDate);
-    const b = new Date(eDate);
-    const ms = Math.max(0, b - a);
-    return Math.ceil(ms / (1000 * 60 * 60 * 24));
-  }, [sDate, eDate]);
-
-  const greaterThan30 = useMemo(() => {
-    return days > 30;
-  }, [sDate, eDate]);
-
-  const pricePerDay = 259;
-  const rent = days * pricePerDay * qty;
-  const fees = 1770; // placeholder
-  const total = rent + fees;
+  const { id } = useParams();
+  const [parkingSpot, setParkingSpot] = useState(null);
 
   const profileComplete = emailDone && phoneDone && profileDone;
-  const canRequest = profileComplete && agree && days > 0;
+
+  useEffect(() => {
+    const res = getParkingSpotsById(id);
+    setParkingSpot(res[0]);
+  }, []);
 
   async function handleRequestToBook(total) {
     try {
@@ -84,7 +61,7 @@ export default function Checkout() {
       <div className="bg-neutral-50 text-neutral-900 min-h-dvh">
         <main className="container-px py-4">
           <div className="flex items-center gap-2 text-sm">
-            <Link to="/space/1">
+            <Link to={`/space/${parkingSpot?.id}`}>
               <button className="h-9 w-9 grid place-content-center rounded-full hover:bg-neutral-200">
                 <span className="text-2xl">く</span>
               </button>
@@ -220,147 +197,24 @@ export default function Checkout() {
             <aside className="lg:sticky lg:top-20 h-fit">
               <div className="bg-white rounded-2xl border border-neutral-200 p-3 flex items-center gap-3 shadow-[0_8px_24px_rgba(2,6,23,0.06)]">
                 <img
-                  src={space.img}
+                  src={parkingSpot?.images[0]}
                   alt=""
                   className="h-16 w-16 rounded-lg object-cover"
                 />
                 <div className="flex-1">
-                  <div className="font-semibold truncate">{space.title}</div>
-                  <div className="text-xs text-neutral-500">{space.sub}</div>
+                  <div className="font-semibold truncate">
+                    {parkingSpot?.host?.name}'s Parking Space
+                  </div>
+                  <div className="text-xs text-neutral-500">Host approval</div>
                 </div>
               </div>
 
-              <div className="mt-4 bg-white rounded-2xl border border-neutral-200 shadow-[0_10px_30px_rgba(2,6,23,0.08)] p-4">
-                <div className="flex items-center justify-between text-sm text-neutral-600">
-                  <span>Available Spaces</span>
-                  <span>Price</span>
-                </div>
-                <div className="flex items-center justify-between font-semibold">
-                  <span>{space.available}</span>
-                  <span>{space.priceUnit}</span>
-                </div>
-
-                <div className="mt-4">
-                  <div className="text-sm text-neutral-600">
-                    Select booking duration
-                    <div className="text-[11px] opacity-80">
-                      (Start Date → End Date)
-                    </div>
-                  </div>
-                  <div className="mt-2 grid grid-cols-2 gap-2">
-                    <input
-                      type="date"
-                      value={sDate}
-                      onChange={(e) => setSDate(e.target.value)}
-                      className="h-11 rounded-xl border border-neutral-300 px-3"
-                    />
-                    <input
-                      type="date"
-                      value={eDate}
-                      onChange={(e) => setEDate(e.target.value)}
-                      className="h-11 rounded-xl border border-neutral-300 px-3"
-                    />
-                  </div>
-                </div>
-
-                <div className="mt-4">
-                  <label className="text-sm text-neutral-700 font-medium pr-3">
-                    Required spaces
-                  </label>
-                  <input
-                    type="number"
-                    min={1}
-                    value={qty}
-                    onChange={(e) =>
-                      setQty(Math.max(1, Number(e.target.value || 1)))
-                    }
-                    className="mt-2 h-11 rounded-xl border border-neutral-300 px-3 w-24"
-                  />
-                  <div className="mt-1 text-[11px] text-neutral-500">
-                    Available booking spaces: 1
-                  </div>
-                </div>
-
-                <div className="mt-4 space-y-2 text-sm">
-                  <label className="flex items-center gap-2">
-                    <input
-                      type="radio"
-                      name="pay"
-                      defaultChecked
-                      checked={!greaterThan30 ? true : null}
-                    />{" "}
-                    Full Payment
-                  </label>
-                  <label
-                    className={`flex items-center gap-2 ${greaterThan30 ? "" : "text-neutral-500"}`}
-                  >
-                    <input
-                      type="radio"
-                      name="pay"
-                      disabled={!greaterThan30}
-                      checked={greaterThan30 ? null : false}
-                    />{" "}
-                    Monthly payments
-                  </label>
-                  <p className="text-[11px] text-neutral-500">
-                    (Applicable for bookings of more than 30 days)
-                  </p>
-                </div>
-
-                <div className="mt-4 grid grid-cols-[1fr_auto] gap-2">
-                  <input
-                    value={coupon}
-                    onChange={(e) => setCoupon(e.target.value)}
-                    placeholder="Enter coupon"
-                    className="h-11 rounded-xl border border-neutral-300 px-3"
-                  />
-                  <button className="h-11 px-4 rounded-xl bg-neutral-200 text-neutral-800 font-medium">
-                    Apply
-                  </button>
-                  <button className="col-span-2 h-10 rounded-xl bg-neutral-100 text-neutral-700 text-sm">
-                    View more coupons
-                  </button>
-                </div>
-
-                <div className="mt-4 border-t border-neutral-200 pt-3 text-sm">
-                  <Row
-                    label="Parking space rent"
-                    value={`₹ ${rent.toFixed(2)}`}
-                  />
-                  <Row
-                    label="Service fees & Taxes"
-                    value={`₹ ${fees.toFixed(2)}`}
-                  />
-                  <div className="flex items-center justify-between py-2 font-semibold border-t mt-2">
-                    <span>Total rent</span>
-                    <span className="text-emerald-600">
-                      ₹ {total.toFixed(2)}
-                    </span>
-                  </div>
-                </div>
-
-                <label className="mt-4 flex items-center gap-2 text-sm text-neutral-700">
-                  <input
-                    type="checkbox"
-                    checked={agree}
-                    onChange={(e) => setAgree(e.target.checked)}
-                  />
-                  I agree to the{" "}
-                  <a className="underline" href="#">
-                    terms and conditions
-                  </a>
-                </label>
-
-                <button
-                  disabled={!canRequest}
-                  className={`mt-3 h-11 w-full rounded-xl font-semibold
-                  ${canRequest ? "bg-red-500 hover:bg-red-600 text-white" : "bg-neutral-200 text-neutral-500 cursor-not-allowed"}`}
-                  onClick={() => handleRequestToBook(total.toFixed(2))}
-                >
-                  Request to book
-                </button>
-              </div>
-
+              <SpaceBookingDetails
+                parkingSpot={parkingSpot}
+                isCheckOutPage={true}
+                profileComplete={profileComplete}
+                handleRequestToBook={handleRequestToBook}
+              />
               {!profileComplete && (
                 <div className="mt-3 bg-rose-50 text-rose-700 border border-rose-200 rounded-xl p-3 text-sm">
                   Please complete your profile to continue.
