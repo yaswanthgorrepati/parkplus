@@ -15,8 +15,8 @@ export default function FooterWide() {
           <div className="mt-4 space-y-2 text-neutral-600">
             <div className="flex items-center gap-2">
               <span>📞</span>
-              <a href="tel:+919657711666" className="hover:underline">
-                (91)9657711666
+              <a href="tel:+919876543210" className="hover:underline">
+                (91)9876543210
               </a>
             </div>
             <div className="flex items-center gap-2">
